@@ -198,6 +198,7 @@ function projectToEditor(project: Project): EditorProject {
   const now = new Date().toISOString();
   const steps: EditorStep[] = project.steps.map((step) => {
     const clickActions = step.actions.filter((action) => action.type === "click");
+    const checkboxActions = step.actions.filter((action) => action.type === "checkbox");
     const inputActions = step.actions.filter(
       (action): action is InputAction => action.type === "input",
     );
@@ -210,6 +211,14 @@ function projectToEditor(project: Project): EditorProject {
       action.rects.map((rect) => ({
         id: `zona-${crypto.randomUUID()}`,
         rect: { ...rect },
+      })),
+    );
+    const checkboxZones = checkboxActions.flatMap((action) =>
+      action.items.map((item) => ({
+        id: `casilla-${crypto.randomUUID()}`,
+        rect: { ...item.rect },
+        expected: item.expected,
+        label: item.label,
       })),
     );
     const textZones: EditorTextZone[] = inputActions.map((action) => ({
@@ -236,6 +245,7 @@ function projectToEditor(project: Project): EditorProject {
       clickZones,
       clickMatch: clickActions[0]?.match ?? "any",
       textZones,
+      checkboxZones,
     };
   });
 

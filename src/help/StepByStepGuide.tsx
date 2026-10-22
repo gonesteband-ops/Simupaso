@@ -31,7 +31,7 @@ const STEPS: GuideStep[] = [
   {
     target: "tools",
     title: "Marca zonas de clic",
-    body: "Elige «Zona de clic» y arrastra sobre el botón o enlace que debe pulsar el alumno. Dibuja todas las zonas válidas que necesites.",
+    body: "Elige «Zona de clic» y arrastra sobre el botón o enlace que debe pulsar el alumno. Si la pantalla usa casillas, elige «Casilla» y dibuja cada checkbox.",
     tip: "En propiedades puedes elegir si basta una zona o se requieren todas.",
   },
   {
@@ -377,6 +377,7 @@ export function StepByStepGuide({ onStart, onOpenManual }: StepByStepGuideProps)
                   <span className="guide-tool">Seleccionar</span>
                   <span className="guide-tool">Zona de clic</span>
                   <span className="guide-tool">Zona de texto</span>
+                  <span className="guide-tool">Casilla</span>
                   <span className="guide-tool highlighted" data-guide="redaction">
                     Difuminar
                   </span>

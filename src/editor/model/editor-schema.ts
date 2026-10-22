@@ -71,6 +71,15 @@ export const editorTextZoneSchema = z
   })
   .strict();
 
+export const editorCheckboxZoneSchema = z
+  .object({
+    id: identifierSchema,
+    rect: editorRectSchema,
+    label: z.string().max(200).optional(),
+    expected: z.boolean(),
+  })
+  .strict();
+
 export const editorRedactionSchema = z
   .object({
     id: identifierSchema,
@@ -100,6 +109,7 @@ export const editorStepSchema = z
     clickZones: z.array(editorClickZoneSchema),
     clickMatch: z.enum(["any", "all"]),
     textZones: z.array(editorTextZoneSchema),
+    checkboxZones: z.array(editorCheckboxZoneSchema).optional(),
   })
   .strict();
 
@@ -192,6 +202,7 @@ export type EditorProject = z.infer<typeof editorProjectSchema>;
 export type EditorStep = z.infer<typeof editorStepSchema>;
 export type EditorClickZone = z.infer<typeof editorClickZoneSchema>;
 export type EditorTextZone = z.infer<typeof editorTextZoneSchema>;
+export type EditorCheckboxZone = z.infer<typeof editorCheckboxZoneSchema>;
 export type EditorRect = z.infer<typeof editorRectSchema>;
 export type EditorTextValidation = z.infer<typeof editorTextValidationSchema>;
 export type EditorRedaction = z.infer<typeof editorRedactionSchema>;

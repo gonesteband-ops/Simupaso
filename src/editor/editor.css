@@ -1012,3 +1012,29 @@
   background: rgb(17 24 39 / 12%);
   color: #111827;
 }
+
+.checkbox-zone {
+  fill: rgb(29 122 86 / 12%);
+  stroke: #1d7a56;
+  stroke-width: 2px;
+  stroke-dasharray: 4 3;
+  vector-effect: non-scaling-stroke;
+  cursor: pointer;
+}
+
+.checkbox-zone.selected {
+  fill: rgb(29 122 86 / 26%);
+  stroke: #c9821d;
+  stroke-width: 3px;
+}
+
+.checkbox-zone-mark {
+  fill: #145f43;
+  font-weight: 900;
+  pointer-events: none;
+}
+
+.zone-badge.checkbox {
+  background: rgb(29 122 86 / 14%);
+  color: #145f43;
+}

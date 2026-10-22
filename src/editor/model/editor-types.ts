@@ -1,4 +1,5 @@
 export type {
+  EditorCheckboxZone,
   EditorClickZone,
   EditorFeedbackMessages,
   EditorProject,
@@ -12,11 +13,12 @@ export type {
 
 import type { EditorProject } from "./editor-schema";
 
-export type EditorTool = "select" | "click" | "text" | "redact" | "hand";
+export type EditorTool = "select" | "click" | "text" | "checkbox" | "redact" | "hand";
 
 export type EditorZoneSelection =
   | { kind: "click"; id: string }
   | { kind: "text"; id: string }
+  | { kind: "checkbox"; id: string }
   | { kind: "redaction"; id: string }
   | null;
 

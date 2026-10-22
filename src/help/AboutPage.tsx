@@ -148,6 +148,14 @@ export function AboutPage({ onStart, onOpenGuide }: AboutPageProps) {
             <p className="about-note">
               Las contraseñas simuladas nunca se guardan ni se reportan al LMS.
             </p>
+            <h3>Casillas de selección</h3>
+            <p>
+              Si el CRM usa checkboxes, elige la herramienta <strong>Casilla</strong> y dibuja
+              cada uno. En propiedades indicas si debe quedar marcada o desmarcada; al
+              confirmar, la app exige que todas las casillas dibujadas coincidan con lo esperado.
+              Si el paso no tiene una zona de clic para confirmar, aparece el botón
+              <strong>Validar selección</strong>.
+            </p>
           </section>
 
           <section id="formulario" className="about-card">

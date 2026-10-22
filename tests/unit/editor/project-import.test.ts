@@ -135,6 +135,40 @@ describe("importación de proyectos", () => {
     expect(imported.warnings[0]).toContain("difuminados originales no son recuperables");
   });
 
+  it("importa casillas de selección desde un SCORM", () => {
+    const project = scormProject();
+    project.steps[0].actions = [
+      {
+        id: "casillas",
+        type: "checkbox",
+        items: [
+          {
+            id: "casilla-1",
+            rect: { x: 0.1, y: 0.1, w: 0.04, h: 0.03 },
+            expected: true,
+          },
+        ],
+        rule: "exact",
+      },
+      {
+        id: "aplicar",
+        type: "click",
+        rects: [{ x: 0.5, y: 0.5, w: 0.1, h: 0.05 }],
+        match: "any",
+      },
+    ];
+    const bytes = zipSync(
+      {
+        "data/project.json": strToU8(JSON.stringify(project)),
+        "assets/captura-scorm.png": strToU8("imagen-scorm"),
+      },
+      { level: 0 },
+    );
+    const imported = importProjectZip(bytes, "proyecto-casillas-importado");
+    expect(imported.document.steps[0].checkboxZones).toHaveLength(1);
+    expect(imported.document.steps[0].checkboxZones?.[0].expected).toBe(true);
+  });
+
   it("rechaza un ZIP sin proyecto reconocible", () => {
     const bytes = zipSync({ "LEEME.txt": strToU8("nada") });
     expect(() => importProjectZip(bytes, "nuevo")).toThrow(/backup\.json|project\.json/);

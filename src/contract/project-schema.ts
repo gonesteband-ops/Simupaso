@@ -86,6 +86,24 @@ export const inputActionSchema = z
   })
   .strict();
 
+export const checkboxItemSchema = z
+  .object({
+    id: identifierSchema,
+    rect: rectSchema,
+    label: z.string().min(1).optional(),
+    expected: z.boolean(),
+  })
+  .strict();
+
+export const checkboxActionSchema = z
+  .object({
+    id: identifierSchema,
+    type: z.literal("checkbox"),
+    items: z.array(checkboxItemSchema).min(1),
+    rule: z.literal("exact").optional(),
+  })
+  .strict();
+
 export const informativeActionSchema = z
   .object({
     id: identifierSchema,
@@ -98,6 +116,7 @@ export const informativeActionSchema = z
 export const actionSchema = z.discriminatedUnion("type", [
   clickActionSchema,
   inputActionSchema,
+  checkboxActionSchema,
   informativeActionSchema,
 ]);
 

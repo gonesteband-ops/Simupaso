@@ -130,7 +130,9 @@ export function useEditor({ draft, repository: injected, onDraftUpdated }: UseEd
           ? step.clickZones.some((zone) => zone.id === activeZone.id)
           : activeZone.kind === "text"
             ? step.textZones.some((zone) => zone.id === activeZone.id)
-            : redactions.some((item) => item.id === activeZone.id));
+            : activeZone.kind === "checkbox"
+              ? (step.checkboxZones ?? []).some((zone) => zone.id === activeZone.id)
+              : redactions.some((item) => item.id === activeZone.id));
       if (!exists) setActiveZone(null);
     }
   }, [activeStepId, activeZone, history.present.steps, history.present.redactions]);

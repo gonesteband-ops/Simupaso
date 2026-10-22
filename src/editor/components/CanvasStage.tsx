@@ -23,13 +23,13 @@ import type {
 type DragState =
   | {
       kind: "create";
-      tool: "click" | "text" | "redact";
+      tool: "click" | "text" | "checkbox" | "redact";
       start: Point;
       current: Point;
     }
   | {
       kind: "move";
-      zoneKind: "click" | "text" | "redaction";
+      zoneKind: "click" | "text" | "checkbox" | "redaction";
       zoneId: string;
       start: Point;
       original: EditorRect;
@@ -37,7 +37,7 @@ type DragState =
     }
   | {
       kind: "resize";
-      zoneKind: "click" | "text" | "redaction";
+      zoneKind: "click" | "text" | "checkbox" | "redaction";
       zoneId: string;
       handle: ResizeHandle;
       start: Point;
@@ -63,6 +63,7 @@ type CanvasStageProps = {
   onSelectZone: (zone: EditorZoneSelection) => void;
   onAddClickZone: (rect: EditorRect) => void;
   onAddTextZone: (rect: EditorRect) => void;
+  onAddCheckboxZone: (rect: EditorRect) => void;
   onAddRedaction: (rect: EditorRect) => void;
   onUpdateZoneRect: (zone: EditorZoneSelection, rect: EditorRect) => void;
   onZoomChange: (zoom: number) => void;
@@ -86,7 +87,13 @@ function findSelectedItem(
   if (selection.kind === "click") {
     return step.clickZones.find((zone) => zone.id === selection.id) ?? null;
   }
-  return step.textZones.find((zone) => zone.id === selection.id) ?? null;
+  if (selection.kind === "text") {
+    return step.textZones.find((zone) => zone.id === selection.id) ?? null;
+  }
+  if (selection.kind === "checkbox") {
+    return (step.checkboxZones ?? []).find((zone) => zone.id === selection.id) ?? null;
+  }
+  return null;
 }
 
 export function CanvasStage({
@@ -101,6 +108,7 @@ export function CanvasStage({
   onSelectZone,
   onAddClickZone,
   onAddTextZone,
+  onAddCheckboxZone,
   onAddRedaction,
   onUpdateZoneRect,
   onZoomChange,
@@ -172,7 +180,12 @@ export function CanvasStage({
       return;
     }
 
-    if (tool === "click" || tool === "text" || tool === "redact") {
+    if (
+      tool === "click" ||
+      tool === "text" ||
+      tool === "checkbox" ||
+      tool === "redact"
+    ) {
       event.preventDefault();
       svgRef.current?.setPointerCapture(event.pointerId);
       setDrag({ kind: "create", tool, start: point, current: point });
@@ -184,7 +197,7 @@ export function CanvasStage({
 
   const startZonePointer = (
     event: ReactPointerEvent,
-    zoneKind: "click" | "text" | "redaction",
+    zoneKind: "click" | "text" | "checkbox" | "redaction",
     zone: SelectableItem,
   ) => {
     if (tool !== "select") return;
@@ -206,7 +219,7 @@ export function CanvasStage({
 
   const startResize = (
     event: ReactPointerEvent,
-    zoneKind: "click" | "text" | "redaction",
+    zoneKind: "click" | "text" | "checkbox" | "redaction",
     zoneId: string,
     handle: ResizeHandle,
     rect: EditorRect,
@@ -271,6 +284,9 @@ export function CanvasStage({
       } else if (drag.tool === "text") {
         onAddTextZone(rect);
         setNotice("");
+      } else if (drag.tool === "checkbox") {
+        onAddCheckboxZone(rect);
+        setNotice("");
       } else {
         onAddRedaction(rect);
         setNotice("");
@@ -329,6 +345,15 @@ export function CanvasStage({
             title="Zona de texto (T)"
           >
             Zona de texto
+          </button>
+          <button
+            type="button"
+            className={tool === "checkbox" ? "tool-button active" : "tool-button"}
+            aria-pressed={tool === "checkbox"}
+            onClick={() => onToolChange("checkbox")}
+            title="Casilla de selección (S)"
+          >
+            Casilla
           </button>
           <button
             type="button"
@@ -407,6 +432,13 @@ export function CanvasStage({
         <button
           type="button"
           className="ghost-button"
+          onClick={() => onAddCheckboxZone({ x: 0.3, y: 0.3, w: 0.05, h: 0.04 })}
+        >
+          Agregar casilla
+        </button>
+        <button
+          type="button"
+          className="ghost-button"
           onClick={() => onAddRedaction({ x: 0.3, y: 0.3, w: 0.25, h: 0.1 })}
         >
           Agregar bloque de difuminado
@@ -479,6 +511,37 @@ export function CanvasStage({
                     startZonePointer(event, "redaction", redaction)
                   }
                 />
+              ))}
+              {(step.checkboxZones ?? []).map((zone) => (
+                <g key={zone.id}>
+                  <rect
+                    data-zone-kind="checkbox"
+                    data-zone-id={zone.id}
+                    className={
+                      activeZone?.kind === "checkbox" && activeZone.id === zone.id
+                        ? "checkbox-zone selected"
+                        : "checkbox-zone"
+                    }
+                    x={zone.rect.x}
+                    y={zone.rect.y}
+                    width={zone.rect.w}
+                    height={zone.rect.h}
+                    onPointerDown={(event) =>
+                      startZonePointer(event, "checkbox", zone)
+                    }
+                  />
+                  <text
+                    className="checkbox-zone-mark"
+                    x={zone.rect.x + zone.rect.w / 2}
+                    y={zone.rect.y + zone.rect.h / 2}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fontSize={Math.min(zone.rect.w, zone.rect.h) * 0.7}
+                    pointerEvents="none"
+                  >
+                    {zone.expected ? "✓" : "–"}
+                  </text>
+                </g>
               ))}
               {step.clickZones.map((zone) => (
                 <rect
@@ -570,7 +633,7 @@ export function CanvasStage({
       <div className="canvas-status">
         <span>
           {step
-            ? `${step.title} · ${step.clickZones.length + step.textZones.length} zonas · ${redactions.length} difuminados`
+            ? `${step.title} · ${step.clickZones.length + step.textZones.length} zonas · ${step.checkboxZones?.length ?? 0} casillas · ${redactions.length} difuminados`
             : "Sin paso seleccionado"}
         </span>
         <span>
@@ -580,7 +643,9 @@ export function CanvasStage({
                   ? "zona de clic"
                   : activeZone.kind === "text"
                     ? "zona de texto"
-                    : "difuminado"
+                    : activeZone.kind === "checkbox"
+                      ? "casilla"
+                      : "difuminado"
               }`
             : "Sin selección"}
         </span>

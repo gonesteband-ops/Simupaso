@@ -6,6 +6,7 @@ import {
 } from "../../contract/text-style";
 import { clampRect, rectToPercent } from "../model/geometry";
 import type {
+  EditorCheckboxZone,
   EditorClickZone,
   EditorRect,
   EditorRedaction,
@@ -23,6 +24,7 @@ type PropertiesPanelProps = {
   onUpdateClickZone: (zoneId: string, patch: Partial<Omit<EditorClickZone, "id">>) => void;
   onUpdateTextZone: (zoneId: string, patch: Partial<Omit<EditorTextZone, "id">>) => void;
   onUpdateRedaction: (redactionId: string, patch: Partial<Omit<EditorRedaction, "id">>) => void;
+  onUpdateCheckboxZone: (zoneId: string, patch: Partial<Omit<EditorCheckboxZone, "id">>) => void;
   onSelectZone: (selection: EditorZoneSelection) => void;
   onDeleteZone: () => void;
   onDuplicateZone: () => void;
@@ -91,19 +93,25 @@ export function PropertiesPanel({
   onUpdateClickZone,
   onUpdateTextZone,
   onUpdateRedaction,
+  onUpdateCheckboxZone,
   onSelectZone,
   onDeleteZone,
   onDuplicateZone,
 }: PropertiesPanelProps) {
-  const [tab, setTab] = useState<"step" | "zones" | "redact">("step");
+  const [tab, setTab] = useState<"step" | "zones" | "redact" | "checkbox">("step");
   const zone = zoneFromStep(step, activeZone);
   const redaction =
     activeZone?.kind === "redaction"
       ? redactions.find((item) => item.id === activeZone.id) ?? null
       : null;
+  const checkbox =
+    activeZone?.kind === "checkbox"
+      ? (step?.checkboxZones ?? []).find((item) => item.id === activeZone.id) ?? null
+      : null;
 
   useEffect(() => {
     if (activeZone?.kind === "redaction") setTab("redact");
+    else if (activeZone?.kind === "checkbox") setTab("checkbox");
     else if (activeZone) setTab("zones");
   }, [activeZone]);
 
@@ -156,6 +164,15 @@ export function PropertiesPanel({
           onClick={() => setTab("zones")}
         >
           Zonas
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={tab === "checkbox"}
+          className={tab === "checkbox" ? "panel-tab active" : "panel-tab"}
+          onClick={() => setTab("checkbox")}
+        >
+          Casillas
         </button>
         <button
           type="button"
@@ -510,7 +527,7 @@ export function PropertiesPanel({
             </div>
           )}
         </div>
-      ) : (
+      ) : tab === "redact" ? (
         <div className="panel-body">
           {redactions.length > 0 && (
             <div className="zone-index" aria-label="Difuminados de la imagen">
@@ -591,6 +608,85 @@ export function PropertiesPanel({
                 </button>
                 <button type="button" className="ghost-button danger" onClick={onDeleteZone}>
                   Eliminar difuminado
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      ) : (
+        <div className="panel-body">
+          {(step.checkboxZones ?? []).length > 0 && (
+            <div className="zone-index" aria-label="Casillas del paso">
+              {(step.checkboxZones ?? []).map((item, index) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={
+                    activeZone?.kind === "checkbox" && activeZone.id === item.id
+                      ? "zone-index-item active"
+                      : "zone-index-item"
+                  }
+                  onClick={() => onSelectZone({ kind: "checkbox", id: item.id })}
+                >
+                  {item.label?.trim() || `Casilla ${index + 1}`}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {!checkbox ? (
+            <div className="panel-empty">
+              <p>No hay una casilla seleccionada.</p>
+              <p className="muted-copy">
+                Usa la herramienta <strong>Casilla (S)</strong> o el botón «Agregar casilla» y
+                dibuja sobre cada checkbox de la captura.
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="zone-badge checkbox">Casilla</div>
+              <label className="field">
+                <span>Etiqueta</span>
+                <input
+                  type="text"
+                  value={checkbox.label ?? ""}
+                  onChange={(event) =>
+                    onUpdateCheckboxZone(checkbox.id, {
+                      label: event.target.value.trim()
+                        ? event.target.value
+                        : undefined,
+                    })
+                  }
+                  placeholder={`Casilla ${(step.checkboxZones ?? []).indexOf(checkbox) + 1}`}
+                />
+              </label>
+              <label className="checkbox-field">
+                <input
+                  type="checkbox"
+                  checked={checkbox.expected}
+                  onChange={(event) =>
+                    onUpdateCheckboxZone(checkbox.id, {
+                      expected: event.target.checked,
+                    })
+                  }
+                />
+                <span>Debe quedar marcada</span>
+              </label>
+              <p className="inline-note">
+                El alumno debe dejar todas las casillas dibujadas en el estado esperado. Usa una
+                zona de clic sobre el botón del formulario para confirmar; si no existe, la vista
+                previa mostrará «Validar selección».
+              </p>
+              <RectFields
+                rect={checkbox.rect}
+                onChange={(rect) => onUpdateCheckboxZone(checkbox.id, { rect })}
+              />
+              <div className="zone-actions">
+                <button type="button" className="ghost-button" onClick={onDuplicateZone}>
+                  Duplicar casilla
+                </button>
+                <button type="button" className="ghost-button danger" onClick={onDeleteZone}>
+                  Eliminar casilla
                 </button>
               </div>
             </>

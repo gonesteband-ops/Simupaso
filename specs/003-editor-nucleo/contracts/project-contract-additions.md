@@ -86,6 +86,23 @@ formMode?: boolean;
   secuencial de una acción a la vez.
 - No se persisten los valores escritos por el alumno; los campos enmascarados se descartan.
 
+### 1.7 Acción `checkbox`
+
+Se agrega una acción compatible:
+
+```ts
+type CheckboxAction = {
+  id: string;
+  type: "checkbox";
+  items: Array<{ id: string; rect: Rect; label?: string; expected: boolean }>;
+  rule?: "exact";
+};
+```
+
+- Se usa para pasos con casillas de selección; `expected` indica si cada casilla debe quedar marcada.
+- El reproductor valida el conjunto exacto al pulsar la acción `click` del paso; si no hay clic, ofrece un botón de validación.
+- Los paquetes que no usan el tipo siguen siendo válidos.
+
 ## 2. Comportamiento del reproductor
 
 - Para una acción `input`, el mensaje de error usa, en orden: `action.messages.error`,

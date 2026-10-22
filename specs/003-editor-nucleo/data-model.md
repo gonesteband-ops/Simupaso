@@ -53,6 +53,7 @@ blobs de las capturas viven en IndexedDB.
 | `clickZones` | `ClickZone[]` | Sí | Puede estar vacío; orden de creación |
 | `clickMatch` | `"any"` \| `"all"` | Sí | Por defecto `any`; aplica al grupo de clic |
 | `textZones` | `TextZone[]` | Sí | Puede estar vacío; el orden del arreglo es el orden de las acciones de texto |
+| `checkboxZones` | `CheckboxZone[]` | No | Casillas de selección; no se mezclan con texto en esta entrega |
 
 **Reglas del paso**:
 

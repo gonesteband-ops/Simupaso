@@ -40,6 +40,9 @@ function findRect(
   if (selection.kind === "text") {
     return step.textZones.find((zone) => zone.id === selection.id)?.rect ?? null;
   }
+  if (selection.kind === "checkbox") {
+    return (step.checkboxZones ?? []).find((zone) => zone.id === selection.id)?.rect ?? null;
+  }
   return redactions.find((item) => item.id === selection.id)?.rect ?? null;
 }
 
@@ -104,6 +107,13 @@ export function EditorPage({ draft, onClose, onDraftUpdated }: EditorPageProps) 
         zoneId: selection.id,
         patch: { rect },
       });
+    } else if (selection.kind === "checkbox") {
+      editor.dispatch({
+        type: "updateCheckboxZone",
+        stepId: editor.activeStep.id,
+        zoneId: selection.id,
+        patch: { rect },
+      });
     } else if (editor.activeAsset) {
       editor.dispatch({
         type: "updateRedaction",
@@ -128,6 +138,12 @@ export function EditorPage({ draft, onClose, onDraftUpdated }: EditorPageProps) 
         stepId: editor.activeStep.id,
         zoneId: editor.activeZone.id,
       });
+    } else if (editor.activeZone.kind === "checkbox") {
+      editor.dispatch({
+        type: "deleteCheckboxZone",
+        stepId: editor.activeStep.id,
+        zoneId: editor.activeZone.id,
+      });
     } else if (editor.activeAsset) {
       editor.dispatch({
         type: "deleteRedaction",
@@ -149,6 +165,12 @@ export function EditorPage({ draft, onClose, onDraftUpdated }: EditorPageProps) 
     } else if (editor.activeZone.kind === "text") {
       editor.dispatch({
         type: "duplicateTextZone",
+        stepId: editor.activeStep.id,
+        zoneId: editor.activeZone.id,
+      });
+    } else if (editor.activeZone.kind === "checkbox") {
+      editor.dispatch({
+        type: "duplicateCheckboxZone",
         stepId: editor.activeStep.id,
         zoneId: editor.activeZone.id,
       });
@@ -204,6 +226,17 @@ export function EditorPage({ draft, onClose, onDraftUpdated }: EditorPageProps) 
       },
     });
     editor.setActiveZone({ kind: "text", id });
+  };
+
+  const addCheckboxZone = (rect: EditorRect) => {
+    if (!editor.activeStep) return;
+    const id = `casilla-${crypto.randomUUID()}`;
+    editor.dispatch({
+      type: "addCheckboxZone",
+      stepId: editor.activeStep.id,
+      zone: { id, rect, expected: true },
+    });
+    editor.setActiveZone({ kind: "checkbox", id });
   };
 
   const addRedaction = (rect: EditorRect) => {
@@ -280,6 +313,7 @@ export function EditorPage({ draft, onClose, onDraftUpdated }: EditorPageProps) 
         if (key === "v") editor.setTool("select");
         if (key === "c") editor.setTool("click");
         if (key === "t") editor.setTool("text");
+        if (key === "s") editor.setTool("checkbox");
         if (key === "b") editor.setTool("redact");
         if (key === "h") editor.setTool("hand");
       }
@@ -530,6 +564,7 @@ export function EditorPage({ draft, onClose, onDraftUpdated }: EditorPageProps) 
               onSelectZone={editor.setActiveZone}
               onAddClickZone={addClickZone}
               onAddTextZone={addTextZone}
+              onAddCheckboxZone={addCheckboxZone}
               onAddRedaction={addRedaction}
               onUpdateZoneRect={updateZoneRect}
               onZoomChange={editor.setZoom}
@@ -574,6 +609,15 @@ export function EditorPage({ draft, onClose, onDraftUpdated }: EditorPageProps) 
                 type: "updateRedaction",
                 assetId: editor.activeAsset.id,
                 redactionId,
+                patch,
+              });
+            }}
+            onUpdateCheckboxZone={(zoneId, patch) => {
+              if (!editor.activeStep) return;
+              editor.dispatch({
+                type: "updateCheckboxZone",
+                stepId: editor.activeStep.id,
+                zoneId,
                 patch,
               });
             }}

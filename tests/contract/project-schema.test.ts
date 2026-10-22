@@ -83,6 +83,23 @@ describe("projectSchema", () => {
     expect(projectSchema.safeParse(project).success).toBe(true);
   });
 
+  it("acepta una acción de casillas", () => {
+    const project = validProject();
+    project.steps[0].actions.push({
+      id: "casillas",
+      type: "checkbox",
+      items: [
+        {
+          id: "casilla-1",
+          rect: { x: 0.1, y: 0.1, w: 0.04, h: 0.03 },
+          expected: true,
+        },
+      ],
+      rule: "exact",
+    });
+    expect(projectSchema.safeParse(project).success).toBe(true);
+  });
+
   it("acepta el modo formulario simultáneo opcional", () => {
     const project = validProject();
     project.steps[0].formMode = true;

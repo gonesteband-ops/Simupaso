@@ -1,4 +1,5 @@
 import type {
+  EditorCheckboxZone,
   EditorClickZone,
   EditorHistory,
   EditorProject,
@@ -30,6 +31,15 @@ export type EditorAction =
     }
   | { type: "deleteClickZone"; stepId: string; zoneId: string }
   | { type: "duplicateClickZone"; stepId: string; zoneId: string }
+  | { type: "addCheckboxZone"; stepId: string; zone: EditorCheckboxZone }
+  | {
+      type: "updateCheckboxZone";
+      stepId: string;
+      zoneId: string;
+      patch: Partial<Omit<EditorCheckboxZone, "id">>;
+    }
+  | { type: "deleteCheckboxZone"; stepId: string; zoneId: string }
+  | { type: "duplicateCheckboxZone"; stepId: string; zoneId: string }
   | { type: "addRedaction"; assetId: string; redaction: EditorRedaction }
   | {
       type: "updateRedaction";
@@ -105,6 +115,7 @@ export function createEditorStep(input: {
     clickZones: [],
     clickMatch: "any",
     textZones: [],
+    checkboxZones: [],
   };
 }
 
@@ -301,6 +312,54 @@ export function editorReducer(state: EditorHistory, action: EditorAction): Edito
         const clickZones = [...step.clickZones];
         clickZones.splice(index + 1, 0, duplicateZone(clickZones[index], "zona"));
         return { ...step, clickZones };
+      });
+      return withDocument(state, next);
+    }
+
+    case "addCheckboxZone": {
+      const next = updateStep(state.present, action.stepId, (step) => ({
+        ...step,
+        checkboxZones: [...(step.checkboxZones ?? []), action.zone],
+      }));
+      return withDocument(state, next);
+    }
+
+    case "updateCheckboxZone": {
+      const next = updateStep(state.present, action.stepId, (step) => {
+        let found = false;
+        const checkboxZones = (step.checkboxZones ?? []).map((zone) => {
+          if (zone.id !== action.zoneId) return zone;
+          found = true;
+          return { ...zone, ...action.patch };
+        });
+        return found ? { ...step, checkboxZones } : step;
+      });
+      return withDocument(state, next);
+    }
+
+    case "deleteCheckboxZone": {
+      const next = updateStep(state.present, action.stepId, (step) => ({
+        ...step,
+        checkboxZones: (step.checkboxZones ?? []).filter(
+          (zone) => zone.id !== action.zoneId,
+        ),
+      }));
+      return withDocument(state, next);
+    }
+
+    case "duplicateCheckboxZone": {
+      const next = updateStep(state.present, action.stepId, (step) => {
+        const zones = step.checkboxZones ?? [];
+        const index = zones.findIndex((zone) => zone.id === action.zoneId);
+        if (index < 0) return step;
+        const copy = {
+          ...zones[index],
+          id: newId("casilla"),
+          rect: { ...zones[index].rect },
+        };
+        const checkboxZones = [...zones];
+        checkboxZones.splice(index + 1, 0, copy);
+        return { ...step, checkboxZones };
       });
       return withDocument(state, next);
     }

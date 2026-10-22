@@ -72,6 +72,32 @@ function buildInputAction(zone: EditorTextZone): Action {
 }
 
 function buildStepActions(step: EditorStep, isLast: boolean): Action[] {
+  const checkboxZones = step.checkboxZones ?? [];
+  if (checkboxZones.length > 0) {
+    const actions: Action[] = [
+      {
+        id: `casillas-${step.id}`,
+        type: "checkbox",
+        items: checkboxZones.map((zone) => ({
+          id: zone.id,
+          rect: zone.rect,
+          expected: zone.expected,
+          ...(zone.label?.trim() ? { label: zone.label.trim() } : {}),
+        })),
+        rule: "exact",
+      },
+    ];
+    if (step.clickZones.length > 0) {
+      actions.push({
+        id: `clic-${step.id}`,
+        type: "click",
+        rects: step.clickZones.map((zone) => zone.rect),
+        match: step.clickMatch,
+      });
+    }
+    return actions;
+  }
+
   if (step.mode === "informative") {
     const buttonLabel =
       step.informativeButtonLabel?.trim() || (isLast ? "Finalizar" : "Siguiente");
@@ -125,11 +151,31 @@ function collectIssues(document: EditorProject, assets: readonly CompileAsset[])
       });
     }
 
+    const checkboxZones = step.checkboxZones ?? [];
+    if (checkboxZones.length > 0 && step.textZones.length > 0) {
+      issues.push({
+        stepId: step.id,
+        field: "checkboxZones",
+        message: `El paso «${step.title}» no puede mezclar casillas y campos de texto.`,
+      });
+    }
+    if (checkboxZones.length > 0 && step.mode === "informative") {
+      issues.push({
+        stepId: step.id,
+        field: "checkboxZones",
+        message: `El paso «${step.title}» tiene casillas; no puede ser informativo.`,
+      });
+    }
+
     if (step.mode === "informative") {
       return;
     }
 
-    if (step.textZones.length === 0 && step.clickZones.length === 0) {
+    if (
+      step.textZones.length === 0 &&
+      step.clickZones.length === 0 &&
+      checkboxZones.length === 0
+    ) {
       issues.push({
         stepId: step.id,
         field: "zones",

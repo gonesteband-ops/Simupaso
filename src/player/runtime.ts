@@ -2,6 +2,7 @@ import { INPUT_FONT_SIZE_DEFAULT } from "../contract/text-style";
 import { validateTextInput } from "../contract/text-validation";
 import type {
   Action,
+  CheckboxAction,
   ClickAction,
   InputAction,
   InformativeAction,
@@ -431,6 +432,76 @@ export function createPlayerRuntime(
     window.requestAnimationFrame(() => fields[0]?.input.focus());
   };
 
+  const renderCheckboxGroup = (
+    action: CheckboxAction,
+    click: ClickAction | null,
+    clickIndex: number,
+  ) => {
+    const asset = project.assets.find((item) => item.id === currentStep().assetId);
+    const fields = action.items.map((item, index) => {
+      const wrapper = createElement("label", "checkbox-overlay");
+      setRectStyle(wrapper, item.rect);
+      wrapper.dataset.testid = "overlay-checkbox";
+      if (asset) {
+        wrapper.style.fontSize = `${Math.max(
+          10,
+          Math.round(asset.height * item.rect.h * 0.6),
+        )}px`;
+      }
+      const input = createElement("input", "checkbox-input");
+      input.type = "checkbox";
+      input.setAttribute("aria-label", item.label ?? `Casilla ${index + 1}`);
+      input.dataset.testid = `overlay-checkbox-${item.id}`;
+      const visual = createElement("span", "checkbox-visual");
+      text(visual, "✓");
+      wrapper.append(input, visual);
+      dom.inputsLayer.append(wrapper);
+      input.addEventListener("change", () => {
+        wrapper.classList.remove("invalid");
+        input.removeAttribute("aria-invalid");
+        setAlert("");
+      });
+      return { item, input, wrapper };
+    });
+
+    function submit(): void {
+      let firstInvalid: { input: HTMLInputElement; wrapper: HTMLElement } | null = null;
+      for (const field of fields) {
+        const valid = field.input.checked === field.item.expected;
+        field.wrapper.classList.toggle("invalid", !valid);
+        if (!valid) {
+          field.input.setAttribute("aria-invalid", "true");
+          if (!firstInvalid) firstInvalid = field;
+        } else {
+          field.input.removeAttribute("aria-invalid");
+        }
+      }
+      if (firstInvalid) {
+        setAlert(
+          currentStep().messages?.error ?? "Revisa las casillas seleccionadas.",
+        );
+        firstInvalid.input.focus();
+        return;
+      }
+      const message = successMessage();
+      text(dom.feedback, message);
+      actionIndex =
+        clickIndex >= 0 ? clickIndex : currentStep().actions.length - 1;
+      advance(message);
+    }
+
+    if (click) {
+      renderClickAction(click, { formMode: true, onActivate: submit });
+    } else {
+      const button = createElement("button", "primary-button");
+      button.type = "button";
+      text(button, "Validar selección");
+      button.addEventListener("click", submit);
+      dom.actionArea.append(button);
+    }
+    window.requestAnimationFrame(() => fields[0]?.input.focus());
+  };
+
   const renderInformativeAction = (action: InformativeAction) => {
     const instruction = createElement("p", "informative-copy");
     text(instruction, action.text);
@@ -448,6 +519,18 @@ export function createPlayerRuntime(
     }
     if (!imageReady) return;
     const step = currentStep();
+    const checkboxIndex = step.actions.findIndex((action) => action.type === "checkbox");
+    if (checkboxIndex >= 0) {
+      const clickIndex = step.actions.findIndex(
+        (action, index) => index > checkboxIndex && action.type === "click",
+      );
+      renderCheckboxGroup(
+        step.actions[checkboxIndex] as CheckboxAction,
+        clickIndex >= 0 ? (step.actions[clickIndex] as ClickAction) : null,
+        clickIndex,
+      );
+      return;
+    }
     if (step.formMode) {
       const clickIndex = step.actions.findIndex((action) => action.type === "click");
       if (clickIndex > 0) {
@@ -467,7 +550,7 @@ export function createPlayerRuntime(
       renderClickAction(action);
     } else if (action.type === "input") {
       renderInputAction(action);
-    } else {
+    } else if (action.type === "informative") {
       renderInformativeAction(action);
     }
   }
@@ -522,7 +605,21 @@ export function createPlayerRuntime(
   }
 
   dom.viewport.addEventListener("click", (event) => {
-    if ((event.target as HTMLElement).closest(".hotspot, .overlay-input")) return;
+    if (
+      (event.target as HTMLElement).closest(
+        ".hotspot, .overlay-input, .checkbox-overlay",
+      )
+    ) {
+      return;
+    }
+    if (currentStep().actions.some((action) => action.type === "checkbox")) {
+      text(
+        dom.feedback,
+        currentStep().messages?.error ??
+          "Marca las casillas y usa el botón indicado para continuar.",
+      );
+      return;
+    }
     if (currentStep().formMode) {
       text(
         dom.feedback,

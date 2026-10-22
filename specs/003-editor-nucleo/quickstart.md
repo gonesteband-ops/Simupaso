@@ -115,6 +115,10 @@ detener la actividad. El aviso de 1024×600 es una recomendación. Una captura d
 siempre se reduce en una ventana de 1024 px; para verla cerca de su tamaño real hay que usar
 una ventana más grande o pantalla completa.
 
+### Casillas de selección
+
+La herramienta **Casilla** permite dibujar los checkboxes de la captura. En el panel **Casillas** se indica si cada uno debe quedar marcado o desmarcado. El alumno puede marcarlos y desmarcarlos; al pulsar la zona de clic del botón se validan todos. Si el paso no tiene zona de clic, aparece **Validar selección**. No se pueden mezclar casillas y campos de texto en el mismo paso, y la selección no se guarda ni se reporta.
+
 ### Formulario realista
 
 Si un paso tiene al menos una zona de texto y una zona de clic, los campos de texto se

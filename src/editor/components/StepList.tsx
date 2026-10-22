@@ -80,7 +80,15 @@ export function StepList({
                   </span>
                   <span className="step-copy">
                     <strong>{step.title}</strong>
-                    <small>{step.mode === "informative" ? "Informativo" : `${step.clickZones.length + step.textZones.length} zonas`}</small>
+                    <small>
+                      {step.mode === "informative"
+                        ? "Informativo"
+                        : `${step.clickZones.length + step.textZones.length} zonas${
+                            (step.checkboxZones?.length ?? 0) > 0
+                              ? ` · ${step.checkboxZones?.length} casillas`
+                              : ""
+                          }`}
+                    </small>
                   </span>
                 </button>
                 <div className="step-actions">

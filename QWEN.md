@@ -6,5 +6,5 @@
 ## Spec Kit
 
 <!-- SPECKIT START -->
-- [Plan de la feature 003](./specs/009-ayuda-integrada/plan.md)
+- [Plan de la feature 003](./specs/010-casillas-seleccion/plan.md)
 <!-- SPECKIT END -->
