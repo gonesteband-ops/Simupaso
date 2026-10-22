@@ -1,0 +1,13 @@
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+*.log
+.env*
+.DS_Store
+Thumbs.db
+.venv/
+
+# Capturas de trabajo con posibles datos de clientes; no subir al repositorio
+images pasos/

@@ -1,0 +1,63 @@
+{
+  "schemaVersion": "1.0",
+  "id": "login-formulario-ficticio",
+  "meta": {
+    "title": "Login simulado",
+    "language": "es-CL",
+    "version": "1.0.0"
+  },
+  "settings": {
+    "allowedModes": ["guided"],
+    "defaultMode": "guided"
+  },
+  "assets": [
+    {
+      "id": "captura-login",
+      "file": "assets/login-demo.svg",
+      "mime": "image/svg+xml",
+      "width": 1200,
+      "height": 800
+    }
+  ],
+  "steps": [
+    {
+      "id": "paso-login",
+      "title": "Ingreso simulado",
+      "instruction": "Escribe el RUT y la clave ficticios, y presiona Entrar.",
+      "assetId": "captura-login",
+      "formMode": true,
+      "messages": {
+        "error": "Revisa los datos del formulario."
+      },
+      "actions": [
+        {
+          "id": "rut",
+          "type": "input",
+          "rect": { "x": 0.2, "y": 0.3, "w": 0.4, "h": 0.08 },
+          "label": "RUT ficticio",
+          "fontSize": 24,
+          "validation": { "kind": "rut", "normalize": true }
+        },
+        {
+          "id": "clave",
+          "type": "input",
+          "rect": { "x": 0.2, "y": 0.42, "w": 0.4, "h": 0.08 },
+          "label": "Clave ficticia",
+          "masked": true,
+          "fontSize": 24,
+          "validation": { "kind": "non_empty" }
+        },
+        {
+          "id": "entrar",
+          "type": "click",
+          "rects": [{ "x": 0.2, "y": 0.54, "w": 0.2, "h": 0.08 }],
+          "match": "any"
+        }
+      ]
+    }
+  ],
+  "completion": {
+    "title": "Ingreso completado",
+    "message": "La simulación ficticia terminó."
+  }
+}

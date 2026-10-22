@@ -1,0 +1,419 @@
+:root {
+  color: #23283b;
+  background: #f7f8fc;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  color: #23283b;
+}
+
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid #557dbd;
+  outline-offset: 3px;
+}
+
+.player-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem clamp(0.75rem, 2vw, 1.75rem);
+  border-bottom: 1px solid #e4e7f1;
+  background: #fff;
+  flex-wrap: wrap;
+}
+
+.player-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.fullscreen-button {
+  min-height: 2.2rem;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #c7ccdb;
+  border-radius: 0.65rem;
+  background: #fff;
+  color: #23283b;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.fullscreen-button:hover {
+  background: #f0f2f9;
+}
+
+.player-header h1 {
+  margin: 0;
+  font-size: clamp(1.25rem, 2.5vw, 1.8rem);
+}
+
+.progress-info {
+  display: grid;
+  width: min(18rem, 40vw);
+  gap: 0.3rem;
+}
+
+.progress-info p {
+  margin: 0;
+  color: #5e6682;
+  font-size: 0.9rem;
+  text-align: right;
+}
+
+progress {
+  width: 100%;
+  height: 0.5rem;
+  accent-color: #6f95d6;
+}
+
+.player-content {
+  width: min(100%, 1700px);
+  margin: 0 auto;
+  padding: clamp(0.6rem, 1.5vw, 1.25rem);
+}
+
+.simulation-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  align-items: stretch;
+  padding: clamp(0.75rem, 1.5vw, 1.25rem);
+  border: 1px solid #e4e7f1;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 0.5rem 2rem rgb(35 40 59 / 6%);
+}
+
+.instruction {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #23283b;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.resolution-warning {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: #f6e7bf;
+  color: #23283b;
+}
+
+.resolution-warning[hidden] {
+  display: none;
+}
+
+.image-viewport {
+  position: relative;
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  height: min(82vh, 64rem);
+  min-height: 16rem;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 0.75rem;
+  background: #f0f2f9;
+}
+
+.image-stage {
+  position: relative;
+  flex: none;
+  overflow: hidden;
+  background: #fff;
+}
+
+.player-image,
+.hotspots {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.player-image {
+  object-fit: fill;
+}
+
+.hotspots {
+  pointer-events: none;
+}
+
+.hotspot {
+  position: absolute;
+  padding: 0;
+  border: 2px solid #6f95d6;
+  border-radius: 0.35rem;
+  background: rgb(169 199 242 / 28%);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.hotspot:hover {
+  border-color: #355f9e;
+  background: rgb(169 199 242 / 45%);
+}
+
+.input-hotspot {
+  border-color: #9a86e0;
+  background: rgb(205 191 242 / 25%);
+  pointer-events: none;
+}
+
+.action-area {
+  display: grid;
+  gap: 0.85rem;
+  align-content: start;
+  padding: 0.25rem 0;
+}
+
+.input-form {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.input-form label {
+  font-weight: 650;
+}
+
+.input-form input {
+  width: 100%;
+  min-height: 2.8rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid #c7ccdb;
+  border-radius: 0.65rem;
+  background: #fff;
+  color: #23283b;
+}
+
+.input-form input::placeholder {
+  color: #5e6682;
+  opacity: 1;
+}
+
+.primary-button {
+  min-height: 2.8rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid #6f95d6;
+  border-radius: 0.65rem;
+  background: #a9c7f2;
+  color: #23283b;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.primary-button:hover {
+  background: #d5e3f8;
+}
+
+.informative-copy {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.feedback,
+.feedback-error {
+  grid-column: 1 / -1;
+  min-height: 1.5rem;
+  margin: 0;
+}
+
+.feedback {
+  color: #315c48;
+}
+
+.feedback-error,
+.fatal-error {
+  color: #822f3b;
+}
+
+.completion-card {
+  grid-column: 1 / -1;
+  padding: 1.5rem;
+  border-radius: 0.85rem;
+  background: #c4ead9;
+  color: #23283b;
+}
+
+.completion-card h2,
+.completion-card p {
+  margin: 0;
+}
+
+.completion-card p {
+  margin-top: 0.5rem;
+}
+
+.fatal-error {
+  margin: 2rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background: #f6c9d0;
+}
+
+@media (max-width: 760px) {
+  .player-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .progress-info {
+    width: 100%;
+  }
+
+  .progress-info p {
+    text-align: left;
+  }
+
+  .simulation-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .image-viewport {
+    height: min(55vh, 32rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Formulario realista sobre la captura */
+
+.inputs-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.overlay-field {
+  position: absolute;
+  pointer-events: none;
+}
+
+.overlay-input {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  pointer-events: auto;
+  padding: 0 0.35em;
+  border: 1px solid #c7ccdb;
+  border-radius: 0.25em;
+  background: #fff;
+  color: #23283b;
+  font: inherit;
+  line-height: 1.2;
+}
+
+.overlay-input::placeholder {
+  color: #5e6682;
+  opacity: 1;
+}
+
+.overlay-input:focus-visible {
+  outline: 3px solid #557dbd;
+  outline-offset: 2px;
+}
+
+.overlay-input.invalid {
+  border-color: #b3261e;
+  box-shadow: 0 0 0 2px rgb(179 38 30 / 20%);
+}
+
+.hotspot.form-submit {
+  border-color: transparent;
+  background: transparent;
+}
+
+.hotspot.form-submit:hover {
+  border-color: rgb(111 149 214 / 55%);
+  background: transparent;
+}
+
+.overlay-field .field-tooltip {
+  position: absolute;
+  bottom: calc(100% + 0.45em);
+  left: 50%;
+  z-index: 5;
+  transform: translateX(-50%);
+  padding: 0.35em 0.6em;
+  border-radius: 0.35em;
+  background: #1f2937;
+  color: #fff;
+  font-size: 1.05em;
+  font-weight: 600;
+  line-height: 1.25;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  box-shadow: 0 0.3em 0.8em rgb(15 23 42 / 22%);
+  transition: opacity 0.12s ease;
+}
+
+.overlay-field .field-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 0.35em solid transparent;
+  border-top-color: #1f2937;
+}
+
+.overlay-field:hover .field-tooltip,
+.overlay-field:focus-within .field-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.overlay-field.tooltip-below .field-tooltip {
+  bottom: auto;
+  top: calc(100% + 0.45em);
+}
+
+.overlay-field.tooltip-below .field-tooltip::after {
+  top: auto;
+  bottom: 100%;
+  border-top-color: transparent;
+  border-bottom-color: #1f2937;
+}

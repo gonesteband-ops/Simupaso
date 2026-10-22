@@ -1,0 +1,101 @@
+{
+  "schemaVersion": "1.0",
+  "id": "simulacion-ficticia",
+  "meta": {
+    "title": "Consulta de demostración",
+    "description": "Flujo sintético para verificar el reproductor y la exportación.",
+    "language": "es-CL",
+    "version": "1.0.0",
+    "author": "Equipo de capacitación"
+  },
+  "settings": {
+    "allowedModes": ["guided"],
+    "defaultMode": "guided"
+  },
+  "assets": [
+    {
+      "id": "captura-ingreso",
+      "file": "assets/login-demo.svg",
+      "mime": "image/svg+xml",
+      "width": 1200,
+      "height": 800
+    },
+    {
+      "id": "captura-consulta",
+      "file": "assets/search-demo.png",
+      "mime": "image/png",
+      "width": 1200,
+      "height": 800
+    }
+  ],
+  "steps": [
+    {
+      "id": "paso-ingreso",
+      "title": "Ingreso de demostración",
+      "instruction": "Ingresa cualquier texto ficticio y selecciona Continuar.",
+      "assetId": "captura-ingreso",
+      "annotations": [
+        {
+          "id": "nota-reservada",
+          "type": "text",
+          "text": "Esta anotación queda reservada y el reproductor la ignora."
+        }
+      ],
+      "actions": [
+        {
+          "id": "usuario",
+          "type": "input",
+          "rect": { "x": 0.25, "y": 0.32, "w": 0.5, "h": 0.09 },
+          "label": "Usuario ficticio",
+          "placeholder": "Escribe cualquier texto",
+          "validation": { "kind": "non_empty" }
+        },
+        {
+          "id": "clave",
+          "type": "input",
+          "rect": { "x": 0.25, "y": 0.45, "w": 0.5, "h": 0.09 },
+          "label": "Contraseña simulada",
+          "placeholder": "No se guarda ni se reporta",
+          "masked": true,
+          "validation": { "kind": "non_empty" }
+        },
+        {
+          "id": "continuar",
+          "type": "click",
+          "rects": [{ "x": 0.38, "y": 0.62, "w": 0.24, "h": 0.08 }],
+          "match": "any"
+        }
+      ]
+    },
+    {
+      "id": "paso-consulta",
+      "title": "Consulta de demostración",
+      "instruction": "Ingresa un RUT ficticio válido y continúa.",
+      "assetId": "captura-consulta",
+      "actions": [
+        {
+          "id": "rut",
+          "type": "input",
+          "rect": { "x": 0.2, "y": 0.32, "w": 0.6, "h": 0.09 },
+          "label": "RUT de prueba",
+          "placeholder": "87.654.321-4",
+          "validation": { "kind": "rut", "normalize": true }
+        },
+        {
+          "id": "buscar",
+          "type": "click",
+          "rects": [{ "x": 0.4, "y": 0.5, "w": 0.2, "h": 0.08 }]
+        },
+        {
+          "id": "confirmacion",
+          "type": "informative",
+          "text": "Lee el mensaje de confirmación ficticio."
+        }
+      ]
+    }
+  ],
+  "completion": {
+    "title": "Simulación completada",
+    "message": "Terminaste la práctica de demostración."
+  }
+}

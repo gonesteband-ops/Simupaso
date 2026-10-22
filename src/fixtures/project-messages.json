@@ -1,0 +1,70 @@
+{
+  "schemaVersion": "1.0",
+  "id": "mensajes-ficticios",
+  "meta": {
+    "title": "Mensajes de demostración",
+    "language": "es-CL",
+    "version": "1.0.0"
+  },
+  "settings": {
+    "allowedModes": ["guided"],
+    "defaultMode": "guided"
+  },
+  "assets": [
+    {
+      "id": "captura-mensajes",
+      "file": "assets/login-demo.svg",
+      "mime": "image/svg+xml",
+      "width": 1200,
+      "height": 800
+    }
+  ],
+  "steps": [
+    {
+      "id": "paso-mensajes",
+      "title": "Mensajes del paso",
+      "instruction": "Completa el campo y el botón ficticio.",
+      "assetId": "captura-mensajes",
+      "messages": {
+        "error": "Error de clic configurado.",
+        "success": "Acierto de clic configurado."
+      },
+      "actions": [
+        {
+          "id": "codigo",
+          "type": "input",
+          "rect": { "x": 0.2, "y": 0.3, "w": 0.4, "h": 0.08 },
+          "label": "Código ficticio",
+          "validation": { "kind": "non_empty" },
+          "messages": {
+            "error": "Error de campo configurado.",
+            "success": "Éxito de campo configurado."
+          }
+        },
+        {
+          "id": "boton",
+          "type": "click",
+          "rects": [{ "x": 0.4, "y": 0.5, "w": 0.2, "h": 0.08 }]
+        }
+      ]
+    },
+    {
+      "id": "paso-final",
+      "title": "Cierre configurado",
+      "instruction": "Pantalla informativa ficticia.",
+      "assetId": "captura-mensajes",
+      "actions": [
+        {
+          "id": "cierre",
+          "type": "informative",
+          "text": "Revisa el cierre ficticio.",
+          "buttonLabel": "Finalizar"
+        }
+      ]
+    }
+  ],
+  "completion": {
+    "title": "Cierre completado",
+    "message": "La demostración de mensajes terminó."
+  }
+}
