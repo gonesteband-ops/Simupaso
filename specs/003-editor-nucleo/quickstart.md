@@ -137,6 +137,13 @@ original permanece solo en IndexedDB. Antes de descargar se exige confirmar que 
 los datos personales. Para datos muy sensibles, usar **Ocultar**; el desenfoque y el
 pixelado pueden ser menos seguros.
 
+### Respaldo editable
+
+El botón **Descargar respaldo** genera un archivo `.simpaso` con el proyecto editable, las
+capturas originales y los rectángulos de difuminado. Incluye imágenes sin difuminar, por lo
+que se exige confirmación y no debe subirse al LMS ni compartirse sin control. La importación
+del respaldo todavía no está implementada.
+
 ### Exportación
 
 El botón **Descargar SCORM 1.2** compila el documento al contrato, valida el proyecto y las

@@ -296,6 +296,14 @@ la imagen procesada.
 
 ---
 
+## Phase 16: Respaldo editable .simpaso (2026-10-21)
+
+- [X] T087 Implementar `createProjectBackup` con proyecto, originales, difuminados y advertencia en `src/editor/model/project-backup.ts`.
+- [X] T088 Agregar el botón y la confirmación de respaldo en `src/editor/EditorPage.tsx`.
+- [X] T089 Probar el respaldo y su contenido en `tests/unit/editor/project-backup.test.ts` y `tests/e2e/editor-backup.spec.ts`; actualizar documentación y regresión.
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies

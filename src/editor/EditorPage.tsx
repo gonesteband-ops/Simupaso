@@ -9,6 +9,7 @@ import type {
 } from "./model/editor-types";
 import { compileEditorProject, type CompileResult } from "./model/compile-project";
 import { downloadBytes, exportEditorProject } from "./model/export-scorm";
+import { createProjectBackup } from "./model/project-backup";
 import { createRedaction, redactionsForAsset } from "./model/redactions";
 import { CanvasStage } from "./components/CanvasStage";
 import { PreviewDialog } from "./components/PreviewDialog";
@@ -64,6 +65,11 @@ export function EditorPage({ draft, onClose, onDraftUpdated }: EditorPageProps) 
   const [exportMessage, setExportMessage] = useState("");
   const [showExportConfirm, setShowExportConfirm] = useState(false);
   const [privacyConfirmed, setPrivacyConfirmed] = useState(false);
+  const [showBackupConfirm, setShowBackupConfirm] = useState(false);
+  const [backupConfirmed, setBackupConfirmed] = useState(false);
+  const [backupState, setBackupState] = useState<"idle" | "generating" | "error">("idle");
+  const [backupMessage, setBackupMessage] = useState("");
+  const [backupError, setBackupError] = useState("");
   const insertInputRef = useRef<HTMLInputElement>(null);
   const previewButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -337,6 +343,26 @@ export function EditorPage({ draft, onClose, onDraftUpdated }: EditorPageProps) 
     0,
   );
 
+  const downloadBackup = async () => {
+    setBackupState("generating");
+    setBackupError("");
+    setBackupMessage("");
+    try {
+      const backup = await createProjectBackup(editor.document, editor.assets);
+      downloadBytes(backup.fileName, backup.bytes);
+      setBackupState("idle");
+      setShowBackupConfirm(false);
+      setBackupMessage(`Se descargó «${backup.fileName}».`);
+    } catch (error) {
+      setBackupState("error");
+      setBackupError(
+        error instanceof Error
+          ? `No se pudo crear el respaldo: ${error.message}`
+          : "No se pudo crear el respaldo.",
+      );
+    }
+  };
+
   const closeEditor = async () => {
     const saved = await editor.saveNow();
     if (!saved && editor.storageState === "available") return;
@@ -394,6 +420,18 @@ export function EditorPage({ draft, onClose, onDraftUpdated }: EditorPageProps) 
           >
             {exportState === "exporting" ? "Generando paquete…" : "Descargar SCORM 1.2"}
           </button>
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => {
+              setBackupConfirmed(false);
+              setBackupError("");
+              setShowBackupConfirm(true);
+            }}
+            disabled={backupState === "generating" || editor.isLoading}
+          >
+            {backupState === "generating" ? "Generando respaldo…" : "Descargar respaldo"}
+          </button>
         </div>
       </header>
 
@@ -414,6 +452,12 @@ export function EditorPage({ draft, onClose, onDraftUpdated }: EditorPageProps) 
       {exportState === "success" && (
         <div className="export-success" role="status">
           {exportMessage}
+        </div>
+      )}
+
+      {backupMessage && (
+        <div className="export-success" role="status">
+          {backupMessage}
         </div>
       )}
 
@@ -563,6 +607,56 @@ export function EditorPage({ draft, onClose, onDraftUpdated }: EditorPageProps) 
           onClose={closePreview}
           onGoToIssue={goToIssue}
         />
+      )}
+
+      {showBackupConfirm && (
+        <div
+          className="confirm-overlay"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Confirmar respaldo"
+        >
+          <div className="confirm-card">
+            <h2>Descargar respaldo</h2>
+            <p>
+              El archivo <strong>.simpaso</strong> incluye el proyecto editable, las capturas
+              originales sin difuminar y los rectángulos de difuminado.
+            </p>
+            <p className="field-error">
+              No subas este respaldo al LMS. Guárdalo en un lugar seguro y con acceso
+              restringido.
+            </p>
+            {backupError && <p className="field-error" role="alert">{backupError}</p>}
+            <label className="checkbox-field">
+              <input
+                type="checkbox"
+                checked={backupConfirmed}
+                onChange={(event) => setBackupConfirmed(event.target.checked)}
+              />
+              <span>Entiendo que el respaldo contiene imágenes originales sin difuminar.</span>
+            </label>
+            <div className="confirm-actions">
+              <button
+                type="button"
+                className="ghost-button"
+                onClick={() => {
+                  setShowBackupConfirm(false);
+                  setBackupError("");
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="primary-button"
+                disabled={!backupConfirmed || backupState === "generating"}
+                onClick={() => void downloadBackup()}
+              >
+                {backupState === "generating" ? "Generando respaldo…" : "Descargar respaldo"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {showExportConfirm && (

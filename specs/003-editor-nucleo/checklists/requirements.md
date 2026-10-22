@@ -31,9 +31,9 @@
 
 ## Notas
 
-- Validación realizada el 2026-10-20: 5 historias (3 P1, 2 P2), 38 requisitos funcionales, 9 criterios de éxito y 12 casos límite.
+- Validación realizada el 2026-10-20: 5 historias (3 P1, 2 P2), 39 requisitos funcionales, 9 criterios de éxito y 12 casos límite.
 - Clarify 2026-10-20: cinco respuestas aceptadas (carga en el editor, validaciones básicas más RUT, vista previa guiada desde el paso elegido, pasos informativos y límite de 10 MB por imagen).
 - El alcance se apoya en la partición de la sección 22: quedan explícitamente fuera anotaciones y difuminado (004), scroll y vínculos (005), modos y puntaje (006), historial y validaciones completas de exportación (007) y validaciones/reemplazo de capturas (008).
 - Formatos de imagen y tolerancia de un píxel quedan como supuestos verificables para `/speckit.plan`; el límite de 10 MB, la vista previa guiada y las validaciones de texto quedaron resueltos en clarify.
 - La especificación no contiene marcadores de aclaración; las decisiones abiertas son de planificación y no bloquean la validación de calidad.
-- Implementación 2026-10-21: 62 tareas base más las mejoras de formulario realista y descarga SCORM completadas; `npm run typecheck`, 120 pruebas unitarias, 34 pruebas E2E y `npm run build` en verde. El contrato, RUT, almacenamiento local y exportador mantienen su regresión. No se probó Safari ni un LMS real.
+- Implementación 2026-10-21: 62 tareas base más las mejoras de formulario realista y descarga SCORM completadas; `npm run typecheck`, 121 pruebas unitarias, 35 pruebas E2E y `npm run build` en verde. El contrato, RUT, almacenamiento local y exportador mantienen su regresión. No se probó Safari ni un LMS real.

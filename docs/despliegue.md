@@ -43,8 +43,10 @@ Para datos de clientes, usar la opción interna o restringir el acceso por red/S
 - El documento, las capturas y los difuminados se guardan en **IndexedDB** del navegador.
 - Cada navegador/perfil/origen tiene su propia biblioteca. No hay sincronización ni
   biblioteca compartida.
-- Limpiar los datos del sitio elimina los proyectos locales. Todavía no hay exportación,
-  importación ni respaldo del proyecto editable.
+- Limpiar los datos del sitio elimina los proyectos locales. Existe una descarga de respaldo
+  `.simpaso` con el proyecto editable y las capturas originales; contiene imágenes sin
+  difuminar y debe guardarse con acceso restringido. La **importación** del respaldo todavía
+  no está implementada.
 - La app no hace peticiones de red externas ni carga CDN, fuentes o telemetría.
 - Las capturas originales no salen del navegador. Los difuminados se aplican a la copia que
   va en la vista previa y en el SCORM.
@@ -70,7 +72,7 @@ Para datos de clientes, usar la opción interna o restringir el acceso por red/S
 
 ## Pendientes conocidos
 
-- Exportar/importar proyecto editable (`.simpaso`) y respaldos locales.
+- Importar el respaldo editable `.simpaso` (la descarga ya está disponible).
 - Validación en el LMS corporativo.
 - Anotaciones de la feature 004 (el difuminado ya está implementado).
 - Prueba en Safari.

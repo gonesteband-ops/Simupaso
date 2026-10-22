@@ -306,6 +306,14 @@ El original permanece en IndexedDB. Antes de exportar se exige confirmar que se 
 datos personales. Además, los campos superpuestos muestran un globo con su placeholder o
 etiqueta al pasar el mouse o enfocar, con `aria-describedby`.
 
+## Respaldo editable `.simpaso` (2026-10-21)
+
+Se agregó un segundo botón **Descargar respaldo** independiente del SCORM. Genera un ZIP
+`.simpaso` con `backup.json` (documento `editor-1`), las capturas **originales** y los
+rectángulos de difuminado, más un `LEEME.txt`. Antes de descargar se advierte que contiene
+imágenes sin difuminar y se exige confirmación. El respaldo no se incluye en el SCORM. La
+importación del respaldo queda pendiente para una siguiente entrega.
+
 ## Definición de terminado
 
 1. `npm run typecheck`, `npm test`, `npm run test:e2e` y `npm run build` pasan.
