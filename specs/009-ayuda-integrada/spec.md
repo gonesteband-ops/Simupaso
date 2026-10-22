@@ -56,7 +56,8 @@ creación, zonas, formulario, difuminado, respaldo/importación, vista previa y 
 - **FR-003**: La guía MUST mostrar una capa de **plomo claro semitransparente** (no negra ni
   demasiado oscura) con un spotlight sobre el elemento del paso actual y un globo con número,
   título y explicación. El velo MUST dejar legible el contexto del editor sin competir con el
-  elemento resaltado.
+  elemento resaltado. El globo MUST colocarse fuera del área resaltada cuando haya espacio,
+  para no tapar el control que se está explicando.
 - **FR-004**: La guía MUST permitir Anterior, Siguiente, Saltar, reiniciar, Empezar a crear
   y Ver manual.
 - **FR-005**: La guía MUST soportar flechas y Escape, anunciar el paso con `aria-live`, tener

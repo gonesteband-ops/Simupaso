@@ -66,6 +66,18 @@ const STEPS: GuideStep[] = [
   },
 ];
 
+const PLACEMENTS: Array<"right" | "left" | "bottom" | "top"> = [
+  "right",
+  "right",
+  "right",
+  "bottom",
+  "right",
+  "left",
+  "bottom",
+  "bottom",
+  "bottom",
+];
+
 type StepByStepGuideProps = {
   onStart: () => void;
   onOpenManual: () => void;
@@ -199,20 +211,62 @@ export function StepByStepGuide({ onStart, onOpenManual }: StepByStepGuideProps)
   });
 
   const cardWidth = Math.min(380, window.innerWidth - 32);
+  const cardHeight = 300;
+  const gap = 16;
+  const margin = 16;
+  const preference = PLACEMENTS[index] ?? "bottom";
   const cardStyle =
     spotlight && !narrow
       ? (() => {
-          const below = spotlight.top + spotlight.height + 16;
-          const top =
-            below + 250 < window.innerHeight
-              ? below
-              : Math.max(16, spotlight.top - 250);
+          const spaceRight =
+            window.innerWidth - (spotlight.left + spotlight.width) - gap - margin;
+          const spaceLeft = spotlight.left - gap - margin;
+          const spaceBelow =
+            window.innerHeight - (spotlight.top + spotlight.height) - gap - margin;
+          const spaceAbove = spotlight.top - gap - margin;
+          const fits = {
+            right: spaceRight >= cardWidth,
+            left: spaceLeft >= cardWidth,
+            bottom: spaceBelow >= cardHeight,
+            top: spaceAbove >= cardHeight,
+          };
+          const order = [preference, "right", "left", "bottom", "top"] as const;
+          const placement = order.find((item) => fits[item]) ?? "bottom";
+
+          if (placement === "right") {
+            return {
+              top: clamp(spotlight.top, margin, window.innerHeight - cardHeight - margin),
+              left: spotlight.left + spotlight.width + gap,
+              width: cardWidth,
+            };
+          }
+          if (placement === "left") {
+            return {
+              top: clamp(spotlight.top, margin, window.innerHeight - cardHeight - margin),
+              left: spotlight.left - cardWidth - gap,
+              width: cardWidth,
+            };
+          }
           const left = clamp(
             spotlight.left + spotlight.width / 2 - cardWidth / 2,
-            16,
-            window.innerWidth - cardWidth - 16,
+            margin,
+            window.innerWidth - cardWidth - margin,
           );
-          return { top, left, width: cardWidth };
+          if (placement === "top") {
+            return {
+              top: Math.max(margin, spotlight.top - cardHeight - gap),
+              left,
+              width: cardWidth,
+            };
+          }
+          return {
+            top: Math.min(
+              window.innerHeight - cardHeight - margin,
+              spotlight.top + spotlight.height + gap,
+            ),
+            left,
+            width: cardWidth,
+          };
         })()
       : undefined;
 

@@ -5,6 +5,18 @@ test.use({ viewport: { width: 1440, height: 900 } });
 const nav = (page: Page) =>
   page.getByRole("navigation", { name: "Secciones principales" });
 
+async function expectNoOverlap(page: Page) {
+  const spotlight = await page.locator(".guide-spotlight").boundingBox();
+  const tooltip = await page.locator(".guide-tooltip").boundingBox();
+  if (!spotlight || !tooltip) throw new Error("No se pudieron medir spotlight y globo.");
+  const overlaps =
+    spotlight.x < tooltip.x + tooltip.width &&
+    tooltip.x < spotlight.x + spotlight.width &&
+    spotlight.y < tooltip.y + tooltip.height &&
+    tooltip.y < spotlight.y + spotlight.height;
+  expect(overlaps).toBe(false);
+}
+
 test("recorre la guía con mouse y teclado, y puede saltar o reiniciar", async ({ page }) => {
   await page.goto("/");
   await nav(page).getByRole("button", { name: "Simu Paso a paso" }).click();
@@ -20,10 +32,12 @@ test("recorre la guía con mouse y teclado, y puede saltar o reiniciar", async (
     .locator(".guide-spotlight")
     .evaluate((element) => getComputedStyle(element).boxShadow);
   expect(veil).toContain("100, 116, 139");
+  await expectNoOverlap(page);
 
   await dialog.getByRole("button", { name: "Siguiente" }).click();
   await expect(dialog).toContainText("Paso 2 de 9");
   await expect(dialog).toContainText("Revisa la secuencia de pasos");
+  await expectNoOverlap(page);
 
   await page.keyboard.press("ArrowRight");
   await expect(dialog).toContainText("Paso 3 de 9");

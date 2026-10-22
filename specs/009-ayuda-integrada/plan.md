@@ -14,6 +14,7 @@ Agregar dos secciones estáticas a la app:
 - `src/help/AboutPage.tsx`: manual por secciones con índice, tarjetas, tabla comparativa
   SCORM vs `.simpaso`, FAQ con `<details>` y enlaces internos.
 - `src/help/help.css`: estilos de ambas páginas sobre los tokens existentes.
+- El globo busca ubicarse a la derecha, izquierda, abajo o arriba del spotlight según el espacio; los pasos que lo necesitan evitan tapar el control resaltado.
 - Integración en `src/app/App.tsx` con las secciones `guia` y `acerca`, botones desde Inicio
   y enlaces cruzados.
 
