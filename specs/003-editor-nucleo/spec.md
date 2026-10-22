@@ -23,7 +23,8 @@
 - Q: ¿Se puede ver la simulación más grande, como la web real? → A: Sí; se usa todo el ancho disponible sin reservar una columna lateral vacía, se amplía el lienzo, se agrega un botón de pantalla completa y el aviso de 1024×600 se presenta como recomendación. El 100 % con scroll no forma parte de esta mejora.
 - Q: ¿Cómo se anonimizan capturas con datos de clientes? → A: Con una herramienta de difuminado por imagen: rectángulos con estilo ocultar, difuminar o pixelar, editables y no destructivos; se queman en la vista previa y el SCORM, el original queda local y se exige una confirmación de privacidad antes de exportar.
 - Q: ¿Cómo se lee la ayuda de un campo superpuesto? → A: Al pasar el mouse o enfocar el campo se muestra un globo con su placeholder o etiqueta; también queda asociado por `aria-describedby`.
-- Q: ¿Se puede descargar un respaldo editable del simulador? → A: Sí; un botón separado descarga un `.simpaso` con el proyecto editable, las capturas originales y los difuminados, bajo confirmación expresa porque contiene datos sin difuminar. La importación del respaldo queda pendiente.
+- Q: ¿Se puede descargar un respaldo editable del simulador? → A: Sí; un botón separado descarga un `.simpaso` con el proyecto editable, las capturas originales y los difuminados, bajo confirmación expresa porque contiene datos sin difuminar.
+- Q: ¿Se puede importar un respaldo o un SCORM para editar sus pasos? → A: Sí; un único botón detecta `.simpaso` (preferido, conserva originales y difuminados) o un SCORM exportado por SimuPaso (reconstruye pasos y zonas, pero las imágenes ya vienen procesadas y los difuminados originales no son recuperables). La importación crea una copia con IDs nuevos y no ejecuta contenido del paquete.
 
 ## Historias de usuario y pruebas
 
@@ -157,6 +158,7 @@ Como trainer, quiero previsualizar el procedimiento desde el paso que estoy edit
 - **FR-037**: El editor MUST permitir marcar rectángulos de difuminado sobre una captura, con estilos ocultar, difuminar y pixelar, intensidad ajustable y edición no destructiva. La redacción MUST aplicarse a la imagen de la vista previa y del SCORM, de modo que los píxeles originales no sean recuperables desde el paquete; el original MUST permanecer solo en el navegador. Antes de exportar, MUST exigirse una confirmación de que se revisaron los datos personales.
 - **FR-038**: En los campos de texto superpuestos, al pasar el mouse o enfocar el campo MUST mostrarse un globo con su placeholder o etiqueta; el texto MUST quedar asociado mediante `aria-describedby` para lectores de pantalla.
 - **FR-039**: El editor MUST ofrecer una descarga de respaldo `.simpaso` separada del SCORM, con el proyecto editable, las capturas originales y los difuminados editables. Antes de descargar MUST advertir que contiene imágenes sin difuminar y exigir confirmación; el respaldo MUST NOT formar parte del paquete SCORM.
+- **FR-040**: El editor MUST permitir importar un respaldo `.simpaso` o un SCORM exportado por SimuPaso desde Mis proyectos, detectando el formato por el contenido del ZIP. MUST validar el manifiesto y los assets, MUST crear una copia con identificadores nuevos y MUST NOT ejecutar HTML del paquete. Para SCORM MUST avisar que las imágenes ya están procesadas y que los difuminados originales no se recuperan.
 
 ### Entidades clave
 

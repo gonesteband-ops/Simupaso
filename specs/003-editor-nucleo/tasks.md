@@ -304,6 +304,15 @@ la imagen procesada.
 
 ---
 
+## Phase 17: Importar SCORM y respaldos (2026-10-21)
+
+- [X] T090 Implementar detección, validación y conversión de `.simpaso`/SCORM en `src/editor/import/project-import.ts`.
+- [X] T091 Agregar **Importar SCORM o respaldo** en `src/app/App.tsx`, con estados de error y advertencias, y estilos en `src/app/styles.css`.
+- [X] T092 Agregar pruebas unitarias y E2E de importación en `tests/unit/editor/project-import.test.ts` y `tests/e2e/editor-import.spec.ts`.
+- [X] T093 Actualizar spec, checklist, quickstart, plan, `docs/despliegue.md` y `PROGRESS.md`; ejecutar la regresión.
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies

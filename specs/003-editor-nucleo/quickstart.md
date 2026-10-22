@@ -144,6 +144,19 @@ capturas originales y los rectángulos de difuminado. Incluye imágenes sin difu
 que se exige confirmación y no debe subirse al LMS ni compartirse sin control. La importación
 del respaldo todavía no está implementada.
 
+### Importar respaldo o SCORM
+
+En **Mis proyectos → Importar SCORM o respaldo** se selecciona un `.simpaso` o un ZIP
+exportado por SimuPaso. La app detecta el contenido:
+
+- con `backup.json` restaura el proyecto editable, los originales y los difuminados;
+- con `data/project.json` reconstruye pasos y zonas desde el SCORM, pero las imágenes ya
+  están procesadas y los difuminados originales no se recuperan.
+
+La importación crea una copia con IDs nuevos y no ejecuta HTML del paquete. Si el nombre
+coincide con otro proyecto, agrega “(importado)”. Los errores de formato, validación o
+assets faltantes se muestran sin dejar un proyecto a medias.
+
 ### Exportación
 
 El botón **Descargar SCORM 1.2** compila el documento al contrato, valida el proyecto y las

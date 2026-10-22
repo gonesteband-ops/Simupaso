@@ -45,8 +45,10 @@ Para datos de clientes, usar la opción interna o restringir el acceso por red/S
   biblioteca compartida.
 - Limpiar los datos del sitio elimina los proyectos locales. Existe una descarga de respaldo
   `.simpaso` con el proyecto editable y las capturas originales; contiene imágenes sin
-  difuminar y debe guardarse con acceso restringido. La **importación** del respaldo todavía
-  no está implementada.
+  difuminar y debe guardarse con acceso restringido.
+- En **Mis proyectos → Importar SCORM o respaldo** se puede restaurar un `.simpaso` o
+  reimportar un SCORM exportado por la app. El importador crea una copia, valida el ZIP y no
+  ejecuta HTML del paquete.
 - La app no hace peticiones de red externas ni carga CDN, fuentes o telemetría.
 - Las capturas originales no salen del navegador. Los difuminados se aplican a la copia que
   va en la vista previa y en el SCORM.
@@ -72,7 +74,8 @@ Para datos de clientes, usar la opción interna o restringir el acceso por red/S
 
 ## Pendientes conocidos
 
-- Importar el respaldo editable `.simpaso` (la descarga ya está disponible).
+- Importar SCORM genéricos de otras herramientas: solo se admiten paquetes exportados por
+  SimuPaso, porque necesitan `data/project.json`.
 - Validación en el LMS corporativo.
 - Anotaciones de la feature 004 (el difuminado ya está implementado).
 - Prueba en Safari.

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { EditorPage } from "../editor/EditorPage";
+import { importProjectZip } from "../editor/import/project-import";
 import {
   createEditorRepository,
   storageErrorMessage,
@@ -45,6 +46,12 @@ export function App() {
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState("");
   const [openEditorId, setOpenEditorId] = useState<string | null>(null);
+  const [importState, setImportState] = useState<"idle" | "importing" | "success" | "error">(
+    "idle",
+  );
+  const [importError, setImportError] = useState("");
+  const [importWarnings, setImportWarnings] = useState<string[]>([]);
+  const importInputRef = useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState("");
   const [clientFilter, setClientFilter] = useState("todos");
   const [sortBy, setSortBy] = useState<"updatedAt" | "name">("updatedAt");
@@ -145,6 +152,50 @@ export function App() {
 
     setForm(initialForm);
     setSection("proyectos");
+  };
+
+  const handleImportFile = async (file: File) => {
+    setImportState("importing");
+    setImportError("");
+    setImportWarnings([]);
+    const projectId = crypto.randomUUID();
+    try {
+      if (file.size > 200 * 1024 * 1024) {
+        throw new Error("El archivo supera el límite de 200 MB para importar.");
+      }
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      const imported = await importProjectZip(bytes, projectId);
+      const baseName = imported.document.meta.title.trim() || "Proyecto importado";
+      const duplicateName = drafts.some(
+        (draft) => draft.name.trim().toLowerCase() === baseName.toLowerCase(),
+      );
+      const name = duplicateName ? `${baseName} (importado)` : baseName;
+      imported.document.meta.title = name;
+
+      for (const asset of imported.assets) {
+        await editorRepository.saveAsset(asset);
+      }
+      await editorRepository.saveProject(imported.document);
+
+      const draft = buildDraft({
+        id: projectId,
+        name,
+        client: imported.document.meta.client,
+        description: imported.document.meta.description,
+        author: imported.document.meta.author,
+        stepCount: imported.document.steps.length,
+      });
+      setDrafts((current) => [draft, ...current]);
+      setImportWarnings(imported.warnings);
+      setImportState("success");
+      setSection("proyectos");
+    } catch (error) {
+      await editorRepository.deleteProjectData(projectId).catch(() => undefined);
+      setImportState("error");
+      setImportError(
+        error instanceof Error ? error.message : "No se pudo importar el archivo.",
+      );
+    }
   };
 
   const handleDeleteDraft = async (id: string) => {
@@ -308,7 +359,50 @@ export function App() {
                   <option value="name">Nombre</option>
                 </select>
               </label>
+
+              <button
+                type="button"
+                className="secondary-button import-button"
+                onClick={() => importInputRef.current?.click()}
+                disabled={importState === "importing"}
+              >
+                {importState === "importing"
+                  ? "Importando…"
+                  : "Importar SCORM o respaldo"}
+              </button>
             </div>
+
+            <input
+              ref={importInputRef}
+              className="visually-hidden"
+              type="file"
+              accept=".simpaso,.zip,application/zip"
+              aria-label="Importar SCORM o respaldo"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                event.target.value = "";
+                if (file) void handleImportFile(file);
+              }}
+            />
+
+            {importState === "error" && (
+              <div className="storage-warning" role="alert">
+                <strong>No se pudo importar.</strong> {importError}
+              </div>
+            )}
+
+            {importState === "success" && (
+              <div className="export-success" role="status">
+                Proyecto importado. Ya aparece en Mis proyectos.
+                {importWarnings.length > 0 && (
+                  <ul>
+                    {importWarnings.map((warning, index) => (
+                      <li key={`${warning}-${index}`}>{warning}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
 
             {filteredDrafts.length === 0 ? (
               <div className="empty-card">

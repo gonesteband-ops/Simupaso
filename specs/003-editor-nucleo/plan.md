@@ -314,6 +314,16 @@ rectángulos de difuminado, más un `LEEME.txt`. Antes de descargar se advierte 
 imágenes sin difuminar y se exige confirmación. El respaldo no se incluye en el SCORM. La
 importación del respaldo queda pendiente para una siguiente entrega.
 
+## Importar SCORM y respaldos (2026-10-21)
+
+Se agregó **Importar SCORM o respaldo** en Mis proyectos. El módulo
+`src/editor/import/project-import.ts` descomprime en memoria, detecta `backup.json` o
+`data/project.json`, valida con Zod, limita tamaño y assets, remapea IDs de assets y proyecto
+y crea una copia. El `.simpaso` conserva originales y difuminados; el SCORM reconstruye pasos
+y zonas desde el contrato, pero sus imágenes ya están procesadas y los difuminados originales
+no se recuperan. No se ejecuta HTML del paquete. Si falla la escritura, se limpia el proyecto
+parcial.
+
 ## Definición de terminado
 
 1. `npm run typecheck`, `npm test`, `npm run test:e2e` y `npm run build` pasan.

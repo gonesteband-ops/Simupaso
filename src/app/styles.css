@@ -457,3 +457,52 @@ button {
   padding: 0.45rem 0.6rem;
   font-size: 0.8rem;
 }
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.secondary-button {
+  border: 1px solid rgba(82, 121, 222, 0.25);
+  border-radius: 0.7rem;
+  padding: 0.55rem 0.8rem;
+  background: var(--panel);
+  color: var(--text);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.secondary-button:hover:not(:disabled),
+.secondary-button:focus-visible:not(:disabled) {
+  background: var(--panel-alt);
+  outline: none;
+}
+
+.import-button {
+  margin-left: auto;
+}
+
+.export-success {
+  margin: 0 0 1rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid rgba(29, 122, 86, 0.28);
+  border-radius: 0.9rem;
+  background: rgba(207, 238, 226, 0.65);
+  color: #145f43;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.export-success ul {
+  margin: 0.45rem 0 0;
+  padding-left: 1.2rem;
+  font-weight: 500;
+}
