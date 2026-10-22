@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { EditorPage } from "../editor/EditorPage";
 import { importProjectZip } from "../editor/import/project-import";
+import { AboutPage } from "../help/AboutPage";
+import { StepByStepGuide } from "../help/StepByStepGuide";
 import {
   createEditorRepository,
   storageErrorMessage,
@@ -15,14 +17,16 @@ import {
   validateDraftName,
 } from "./storage";
 
-type SectionId = "inicio" | "proyectos" | "crear" | "historial";
+type SectionId = "inicio" | "guia" | "proyectos" | "crear" | "historial" | "acerca";
 type SaveState = "saving" | "saved" | "error";
 
 const SECTION_LABELS: Record<SectionId, string> = {
   inicio: "Inicio",
+  guia: "Simu Paso a paso",
   proyectos: "Mis proyectos",
   crear: "Crear nuevo",
   historial: "Historial de SCORM",
+  acerca: "Acerca de",
 };
 
 const initialForm = {
@@ -278,9 +282,14 @@ export function App() {
                 <p className="eyebrow">Inicio</p>
                 <h1>Bienvenido a SimuPaso Studio</h1>
               </div>
-              <button type="button" className="primary-button" onClick={() => setSection("crear")}>
-                Crear simulador
-              </button>
+              <div className="help-actions">
+                <button type="button" className="secondary-button" onClick={() => setSection("guia")}>
+                  Simu Paso a paso
+                </button>
+                <button type="button" className="primary-button" onClick={() => setSection("crear")}>
+                  Crear simulador
+                </button>
+              </div>
             </div>
 
             <div className="hero-grid">
@@ -305,6 +314,20 @@ export function App() {
               </div>
             </div>
           </section>
+        )}
+
+        {section === "guia" && (
+          <StepByStepGuide
+            onStart={() => setSection("crear")}
+            onOpenManual={() => setSection("acerca")}
+          />
+        )}
+
+        {section === "acerca" && (
+          <AboutPage
+            onStart={() => setSection("crear")}
+            onOpenGuide={() => setSection("guia")}
+          />
         )}
 
         {section === "proyectos" && (
